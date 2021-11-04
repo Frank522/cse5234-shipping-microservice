@@ -1,6 +1,6 @@
 var express = require("express");
 var app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3003;
 const { Client } = require("pg");
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
@@ -21,8 +21,8 @@ app.use(
 
 client.connect();
 
-async function insertShipping(request, response) {
-  let shipping = request.body.shipping;
+async function insertShippinginfo(request, response) {
+  let data = request.body;
   client.query(
     "INSERT INTO shipping (address, city, id, name, shipping_method, shipping_method2, state, zipcode) values ($1, $2, $3, $4, $5, $6, $7, $8);",
     [
@@ -41,14 +41,17 @@ async function insertShipping(request, response) {
       client.end();
     }
   );
+  response.send("Initiate the shipping process")
 }
 
 app
-  .route("/ShippingMicroservice/Shipping")
-  .post(jsonParser, function (req, res) {
-    console.log(req.body.product);
-    insertShipping(req, res);
-  });
+.route("/ShippingMicroservice/Shipping")
+.post(
+  jsonParser,
+  function(req, res) {
+    insertShippinginfo(req, res);
+  }
+)
 
 var server = app.listen(port, function () {
   var host = server.address().address;
