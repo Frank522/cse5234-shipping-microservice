@@ -1,6 +1,8 @@
 var express = require("express");
 var app = express();
-const port = process.env.PORT || 3003;
+const port = process.env.PORT || 3004;
+const axios = require('axios');
+const http = require("https");
 const { Client } = require("pg");
 var bodyParser = require("body-parser");
 var jsonParser = bodyParser.json();
@@ -18,10 +20,17 @@ app.use(
     origin: "*",
   })
 );
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*"); // update to match the domain you will make the request from
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
+  next();
+});
 
-client.connect();
+
 
 async function insertShippinginfo(request, response) {
+  client.connect();
   let shipping = request.body.shipping;
   client.query(
     "INSERT INTO shipping (id, shipping_method) values ($1, $2);",
