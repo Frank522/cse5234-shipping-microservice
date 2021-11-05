@@ -22,18 +22,12 @@ app.use(
 client.connect();
 
 async function insertShippinginfo(request, response) {
-  let data = request.body;
+  let shipping = request.body.shipping;
   client.query(
-    "INSERT INTO shipping (address, city, id, name, shipping_method, shipping_method2, state, zipcode) values ($1, $2, $3, $4, $5, $6, $7, $8);",
+    "INSERT INTO shipping (id, shipping_method) values ($1, $2);",
     [
-      shipping.address,
-      shipping.city,
       shipping.id,
-      shipping.name,
       shipping.shipping_method,
-      shipping.shipping_method2,
-      shipping.state,
-      shipping.zipcode,
     ],
     (err, res) => {
       if (err) throw err;
@@ -41,7 +35,12 @@ async function insertShippinginfo(request, response) {
       client.end();
     }
   );
-  response.send("Initiate the shipping process")
+  let result = {
+    confirm: "SH015049",
+    id: shipping.id,
+    msg: "Garden Initiate the shipping process successfull"
+  };
+  response.send(result);
 }
 
 app
